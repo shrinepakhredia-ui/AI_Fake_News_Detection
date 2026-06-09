@@ -10,9 +10,7 @@ from config import (
 from src.preprocessing import clean_text
 
 
-# ==========================================================
 # Load Trained Objects
-# ==========================================================
 
 print("Loading Trained Model...")
 
@@ -27,9 +25,7 @@ feature_names = vectorizer.get_feature_names_out()
 print("Model Loaded Successfully")
 
 
-# ==========================================================
 # Prediction Function
-# ==========================================================
 
 def predict_news(news_text):
     """
@@ -56,9 +52,8 @@ def predict_news(news_text):
 
     try:
 
-        # ----------------------------------
+
         # Validate Input
-        # ----------------------------------
 
         if not isinstance(news_text, str):
             raise TypeError("Input must be a string.")
@@ -93,9 +88,8 @@ def predict_news(news_text):
 
             }
 
-        # ----------------------------------
+
         # Article Statistics
-        # ----------------------------------
 
         word_count = len(news_text.split())
 
@@ -103,15 +97,13 @@ def predict_news(news_text):
 
         reading_time = max(1, round(word_count / 200))
 
-        # ----------------------------------
+
         # Text Cleaning
-        # ----------------------------------
 
         cleaned_text = clean_text(news_text)
 
-        # ----------------------------------
+
         # TF-IDF Features
-        # ----------------------------------
 
         news_vector = vectorizer.transform([cleaned_text])
 
@@ -131,9 +123,8 @@ def predict_news(news_text):
 
                 )
 
-        # ----------------------------------
+
         # Prediction
-        # ----------------------------------
 
         prediction = model.predict(news_vector)[0]
 
@@ -145,9 +136,8 @@ def predict_news(news_text):
 
         confidence = max(fake_probability, real_probability)
 
-        # ----------------------------------
+
         # Prediction Label
-        # ----------------------------------
 
         if prediction == 1:
 
@@ -157,9 +147,8 @@ def predict_news(news_text):
 
             label = "❌ FAKE NEWS"
 
-        # ----------------------------------
+
         # Risk Level
-        # ----------------------------------
 
         if confidence >= 95:
 
@@ -177,9 +166,8 @@ def predict_news(news_text):
 
             risk_level = "🔴 High"
 
-        # ----------------------------------
+
         # Model Explanation
-        # ----------------------------------
 
         if prediction == 1:
 
@@ -195,9 +183,8 @@ def predict_news(news_text):
                 "found in fake or misleading news content."
             )
 
-        # ----------------------------------
+
         # Processing Time
-        # ----------------------------------
 
         processing_time = round(
 
@@ -207,9 +194,8 @@ def predict_news(news_text):
 
         )
 
-        # ----------------------------------
+
         # Return Result
-        # ----------------------------------
 
         return {
 
@@ -278,9 +264,7 @@ def predict_news(news_text):
         }
 
 
-# ==========================================================
 # Testing
-# ==========================================================
 
 if __name__ == "__main__":
 

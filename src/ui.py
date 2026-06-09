@@ -1,12 +1,3 @@
-"""
-==========================================================
-AI Fake News Detection
-User Interface Module
-
-Author : Shrine Pakhredia
-==========================================================
-"""
-
 import streamlit as st
 import pandas as pd
 from datetime import datetime
@@ -14,10 +5,7 @@ import plotly.express as px
 
 from predict import predict_news
 
-
-# ==========================================================
 # Load CSS
-# ==========================================================
 
 def load_css():
 
@@ -32,9 +20,7 @@ def load_css():
         )
 
 
-# ==========================================================
 # Initialize Session State
-# ==========================================================
 
 def initialize_session():
 
@@ -47,9 +33,7 @@ def initialize_session():
         st.session_state.news_text = ""
 
 
-# ==========================================================
 # Header
-# ==========================================================
 
 def show_header():
 
@@ -62,25 +46,52 @@ def show_header():
     st.divider()
 
 
-# ==========================================================
 # Analyze Tab
-# ==========================================================
 
 def analyze_news_tab():
 
     st.subheader("Analyze News")
 
-    news = st.text_area(
+    input_mode = st.radio(
 
-        "Enter News Article",
+        "Choose Input Type",
+        (
+            "📝 Paste News Text",
 
-        value=st.session_state.news_text,
+            "🔗 Analyze News URL"
+        ),
 
-        height=250,
-
-        placeholder="Paste complete news article here..."
+        horizontal=True
 
     )
+
+    news = ""
+
+    url = ""
+
+    if input_mode == "📝 Paste News Text":
+
+        news = st.text_area(
+
+            "Enter News Article",
+
+            value=st.session_state.news_text,
+
+            height=250,
+
+            placeholder="Paste complete news article here..."
+
+        )
+
+    else:
+
+        url = st.text_input(
+
+            "Enter News URL",
+
+            placeholder="https://example.com/news"
+
+        )
 
     col1, col2, col3 = st.columns(3)
 
@@ -115,7 +126,6 @@ def analyze_news_tab():
         )
 
 
-    # ------------------------------------------------------
 
     if sample:
 
@@ -138,9 +148,23 @@ def analyze_news_tab():
 
     if analyze:
 
-        if news.strip() == "":
+        if input_mode == "📝 Paste News Text":
 
-            st.warning("Please enter a news article.")
+            if news.strip() == "":
+
+                st.warning("Please enter a news article.")
+
+                return
+
+        else:
+
+            if url.strip() == "":
+
+                st.warning("Please enter a news URL.")
+
+                return
+
+            st.info("🚧 URL Analysis will be available in the next update.")
 
             return
 
@@ -206,19 +230,19 @@ def analyze_news_tab():
 
         with info1:
 
-         st.metric(
+            st.metric(
 
             "⚡ Processing Time",
 
             f"{result['processing_time']} sec"
 
-          )
+            )
 
         with info2:
 
             st.metric(
 
-              "🛡 Risk Level",
+                "🛡 Risk Level",
 
                 result["risk_level"]
 
@@ -415,9 +439,7 @@ def analyze_news_tab():
 
             st.info("No Significant keywords found. ")
 
-# ==========================================================
 # History Tab
-# ==========================================================
 
 def history_tab():
 
@@ -466,9 +488,7 @@ def history_tab():
     )
 
 
-# ==========================================================
 # About Tab
-# ==========================================================
 
 def about_tab():
 
@@ -515,9 +535,7 @@ B.Tech Artificial Intelligence & Machine Learning
 
 
 
-# ==========================================================
 # Footer
-# ==========================================================
 
 def footer():
 
@@ -537,9 +555,7 @@ def footer():
 
 
 
-# ==========================================================
 # Run UI
-# ==========================================================
 
 def run_ui():
 
