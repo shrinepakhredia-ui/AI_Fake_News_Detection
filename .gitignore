@@ -12,16 +12,12 @@ venv/
 # Jupyter
 .ipynb_checkpoints/
 
-# OS Files
+# OS
 .DS_Store
 Thumbs.db
 
-models/*.pkl
-
-data/processed/
-
+# Dataset
 data/
-*.csv
-*.pkl
+
+# Generated models
 models/
-.ipynb_checkpoints/
