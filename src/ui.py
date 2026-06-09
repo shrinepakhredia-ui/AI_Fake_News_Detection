@@ -252,7 +252,10 @@ def analyze_news_tab():
 
         with st.spinner("Analyzing News..."):
 
-            result = predict_news(news)
+            result = predict_news(
+                article["text"],
+                source_url = url
+            )
 
 
         st.session_state.history.insert(
@@ -321,22 +324,65 @@ def analyze_news_tab():
         card3, card4 = st.columns(2)
 
         with card3:
+
             st.metric(
                 "🏢 Publisher",
                 result["publisher"]
             )
 
         with card4:
+
             st.metric(
                 "⚡ Processing Time",
                 f"{result['processing_time']}sec"
             )
 
-        if article["trusted"]:
-            st.success( f"🟢 Verified Source ({article['publisher']})")
+        st.divider()
+
+        st.subheader("🌐 Source Reliability")
+
+        left, right = st.columns([3,1])
+
+        with left:
+            st.progress(
+                result["source_score"]/100
+            )
+
+        with right:
+            st.metric(
+                "Source",
+                f"{result['source_score']}%"
+            )
+
+        if result["source_level"]== "Very High":
+            st.success(
+                f"🟢 Reliability : {result['source_level']}"
+            )
+
+        elif result["source_level"]== "High":
+            st.info(
+                f"🔵 Reliability : {result['source_level']}"
+            )
+
+        elif result["source_level"]== "Moderate":
+            st.warning(
+                f"🟡 Reliability : {result['source_level']}"
+            )
 
         else:
-            st.warning("🟡 Source Not Verified")
+            st.error(
+                f"🔴 Reliability : {result['source_level']}"
+            )
+
+        if result["trusted_source"]:
+            st.success(
+                "✅ Verified News Publisher"
+            )
+
+        else:
+            st.warning(
+                "⚠️ Source Not Verified"
+            )
 
 
 

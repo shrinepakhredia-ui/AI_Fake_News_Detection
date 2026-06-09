@@ -1,6 +1,7 @@
 import time
 import joblib
 from datetime import datetime
+from src.source_score import get_source_score
 
 from config import (
     RANDOM_FOREST_MODEL,
@@ -225,9 +226,34 @@ def predict_news(news_text, source_url=None):
 
         }
 
+        #Source Verification
+        
+        trusted_source = False
+
+        publisher="Unknown"
+
+        source_info = {
+
+            "trusted" : False,
+
+            "publisher": "Unknown"
+        }
+
         if source_url:
 
             source_info = check_source(source_url)
+
+            trusted_source = source_info["trusted"]
+
+            publisher = source_info["publisher"]
+
+        # Source Reliability Score
+
+        source_data = get_source_score(publisher)
+
+        source_score = source_data["score"]
+
+        source_level = source_data["level"]
 
         # ==================================================
         # AI Trust Score
@@ -367,11 +393,15 @@ def predict_news(news_text, source_url=None):
 
             "trust_score": trust_score,
 
-            "trusted_source": source_info["trusted"],
+            "trusted_source": trusted_source,
 
-            "publisher": source_info["publisher"],
+            "publisher": publisher,
 
-            "trust_reasons": trust_reasons
+            "trust_reasons": trust_reasons,
+
+            "source_score": source_score,
+
+            "source_level": source_level
 
         }
 
