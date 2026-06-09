@@ -5,6 +5,10 @@ import plotly.express as px
 
 from predict import predict_news
 
+from src.url_extractor import extract_article
+
+
+
 # Load CSS
 
 def load_css():
@@ -164,9 +168,86 @@ def analyze_news_tab():
 
                 return
 
-            st.info("🚧 URL Analysis will be available in the next update.")
+            with st.spinner("Extracting article..."):
 
-            return
+                article = extract_article(url)
+
+            if not article["success"]:
+
+                st.error("Unable to extract the article.")
+
+                st.caption(article["error"])
+
+                return
+
+            if article["trusted"]:
+
+                st.success(
+                    f"✅ Verified Publisher: {article['publisher']}"
+                )
+
+                st.caption(
+                    f"Domain: {article['domain']}"
+                )
+
+            else:
+                st.warning(
+                    "⚠️ Source Not Verified"
+                )
+
+                st.caption(
+                    f"Domain: {article['domain']}"
+                )
+
+            st.subheader(article["title"])
+            if article["authors"]:
+
+                st.caption(
+                    "✍ Author: " + ", ".join(article["authors"])
+                )
+
+            news = article["text"]
+
+        if input_mode == "🔗 Analyze News URL":
+
+            st.divider()
+
+            st.subheader("📰 Extracted Article")
+
+            st.write("### " + article["title"])
+
+            if article["top_image"]:
+
+                st.image(
+
+                    article["top_image"],
+
+                    use_container_width=True
+
+                )
+
+            if article["authors"]:
+
+                st.caption(
+
+                    "Author: " +
+
+                    ", ".join(article["authors"])
+
+                )
+
+            if article["publish_date"]:
+
+                st.caption(
+
+                    f"Published: {article['publish_date']}"
+
+                )
+
+            with st.expander("View Extracted Article"):
+
+                st.write(news)
+
 
 
         with st.spinner("Analyzing News..."):
@@ -184,7 +265,7 @@ def analyze_news_tab():
 
         "Prediction": result["prediction"],
 
-        "Confidence (%)": result["confidence"],
+        "Confidence(%)": result["confidence"],
 
         "Risk": result["risk_level"],
 
@@ -199,54 +280,63 @@ def analyze_news_tab():
 
         st.divider()
 
-        st.subheader("Prediction Result")
-
+        st.subheader("🎯 Prediction Result")
 
         if "REAL" in result["prediction"]:
-
             st.success(result["prediction"])
 
         else:
 
             st.error(result["prediction"])
 
-
         st.metric(
+            "🎯 Model Confidence",
 
-            "Model Confidence",
-
-            f"{result['confidence']} %"
-
+            f"{result['confidence']}%"
         )
-
 
         st.progress(
-
-            result["confidence"] / 100
+            result["confidence"]/100
         )
+
         st.divider()
 
-        info1, info2 = st.columns(2)
+        card1,card2 = st.columns(2)
 
-        with info1:
+        with card1:
 
             st.metric(
 
-            "⚡ Processing Time",
-
-            f"{result['processing_time']} sec"
-
+                "🧠 AI Trust Score",
+                f"{result['trust_score']}%"
             )
 
-        with info2:
-
+        with card2:
             st.metric(
 
                 "🛡 Risk Level",
-
                 result["risk_level"]
-
             )
+
+        card3, card4 = st.columns(2)
+
+        with card3:
+            st.metric(
+                "🏢 Publisher",
+                result["publisher"]
+            )
+
+        with card4:
+            st.metric(
+                "⚡ Processing Time",
+                f"{result['processing_time']}sec"
+            )
+
+        if article["trusted"]:
+            st.success( f"🟢 Verified Source ({article['publisher']})")
+
+        else:
+            st.warning("🟡 Source Not Verified")
 
 
 
@@ -321,9 +411,9 @@ def analyze_news_tab():
 
             color_discrete_sequence=[
 
-                "#ff4b4b",
+                "#9f0101",
 
-                "#00cc96"
+                "#0ee8ae"
 
             ]
 
@@ -331,7 +421,7 @@ def analyze_news_tab():
 
         fig.update_traces(
 
-            width=0.28,
+            width=0.18,
 
             texttemplate="%{text:.1f}%",
 
@@ -343,19 +433,24 @@ def analyze_news_tab():
 
         fig.update_layout(
 
-            height=270,
+            height=330,
 
-            bargap=0.65,
-
-            showlegend=False,
-
-            xaxis_title="",
-
-            yaxis_title="Probability (%)",
+            bargap=0.80,
 
             plot_bgcolor="rgba(0,0,0,0)",
 
             paper_bgcolor="rgba(0,0,0,0)",
+
+            showlegend=False,
+
+            xaxis_title=None,
+
+            yaxis_title="Probability (%)",
+
+            font=dict(
+                size=14
+            ),
+
 
             margin=dict(
 
@@ -374,7 +469,7 @@ def analyze_news_tab():
 
         fig.update_yaxes(
 
-            range=[0,100],
+            range=[0,105],
 
             showgrid=False
 
@@ -391,7 +486,11 @@ def analyze_news_tab():
 
             fig,
 
-            use_container_width=True
+            use_container_width=True,
+
+            config={
+                "displayModeBar": False
+            }
 
         )
 
@@ -413,13 +512,48 @@ def analyze_news_tab():
         s2.metric("Characters", characters)
 
         s3.metric("Reading Time", f"{reading_time} min")
+
         st.divider()
 
-        st.subheader("🧠 Model Explanation")
+        st.subheader("🔑 Top Keywords")
+
+        if result["top_keywords"]:
+
+            keyword_cols = st.columns(min(len(result["top_keywords"]), 5))
+
+            for col, keyword in zip(keyword_cols, result["top_keywords"]):
+
+                with col:
+
+                    st.info(keyword)
+
+        else:
+
+            st.info("No keywords detected.")
+
+        st.divider()
+
+        st.subheader("✅ Trust Factors")
+
+        if result["trust_reasons"]:
+
+            for reason in result["trust_reasons"]:
+
+                st.success(reason)
+
+        else:
+
+            st.warning("No trust indicators available.")
+
+
+        st.divider()
+
+        st.subheader("🧠 AI Model Explanation")
 
         with st.container(border=True):
 
-            st.write(result["explanation"])
+            st.markdown(result["explanation"])
+
 
         st.divider()
 
@@ -457,12 +591,67 @@ def history_tab():
 
     )
 
+    total_predictions = len(history_df)
+
+    real_predictions = len(
+        history_df[
+            history_df["Prediction"].str.contains(
+                "REAL",
+                case=False,
+                na=False
+            )
+        ]
+    )
+
+    fake_predictions = total_predictions - real_predictions
+    average_confidence= round(
+        history_df["Confidence(%)"].mean(),
+        2
+    )
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        st.metric(
+            "📊 Total",
+            total_predictions
+        )
+
+    with col2:
+        st.metric(
+            "✅ Real",
+            real_predictions
+        )
+
+    with col3:
+        st.metric(
+            "❌ Fake",
+            fake_predictions
+        )
+
+    with col4:
+        st.metric(
+            "🎯 Avg Confidence",
+            f"{average_confidence}%"
+        )
+
+    st.divider()
+
+    history_df["Confidence(%)"] = history_df["Confidence(%)"].astype(float)
+
+    styled_df = history_df.style.format({
+        "Confidence (%)" : "{:.2f}%"
+
+    }).background_gradient(
+
+        subset=["Confidence(%)"],
+        cmap="Greens"
+    )
+
     st.dataframe(
 
-        history_df,
-
+        styled_df,
         use_container_width=True,
-
         hide_index=True
 
     )
@@ -486,6 +675,17 @@ def history_tab():
         use_container_width=True
 
     )
+
+    st.divider()
+
+    if st.button(
+        "🗑 Clear History",
+        use_container_width=True
+    ):
+
+        st.session_state.history.clear()
+        st.success("History Cleared Successfully.")
+        st.rerun()
 
 
 # About Tab
@@ -541,16 +741,25 @@ def footer():
 
     st.divider()
 
+    col1, col2 = st.columns(2)
+
+    with col1:
+
+        st.caption(
+            "📰 AI Fake News Detection"
+
+        )
+
+    with col2:
+
+        st.caption(
+
+            "Made with ❤️ using Python • Streamlit • Scikit-Learn"
+
+        )
+
     st.caption(
-
-    "Made with using Python, Streamlit & Scikit-Learn"
-
-    )
-
-    st.caption(
-
-    "© 2026 Shrine Pakhredia"
-
+        "© 2026 Shrine Pakhredia"
     )
 
 

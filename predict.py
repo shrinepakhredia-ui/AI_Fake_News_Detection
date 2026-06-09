@@ -8,9 +8,12 @@ from config import (
 )
 
 from src.preprocessing import clean_text
+from src.source_checker import check_source
 
 
+# ==========================================================
 # Load Trained Objects
+# ==========================================================
 
 print("Loading Trained Model...")
 
@@ -25,9 +28,11 @@ feature_names = vectorizer.get_feature_names_out()
 print("Model Loaded Successfully")
 
 
+# ==========================================================
 # Prediction Function
+# ==========================================================
 
-def predict_news(news_text):
+def predict_news(news_text, source_url=None):
     """
     Predict whether the given news article is Real or Fake.
 
@@ -46,14 +51,20 @@ def predict_news(news_text):
         processing_time
         risk_level
         explanation
+        trust_score
+        trusted_source
+        publisher
+        trust_reasons
+        top_keywords
     """
 
     start_time = time.time()
 
     try:
 
-
+        # --------------------------------------------------
         # Validate Input
+        # --------------------------------------------------
 
         if not isinstance(news_text, str):
             raise TypeError("Input must be a string.")
@@ -84,12 +95,23 @@ def predict_news(news_text):
 
                 "risk_level": "Unknown",
 
-                "explanation": "Please enter a valid news article."
+                "explanation": "Please enter a valid news article.",
+
+                "top_keywords": [],
+
+                "trust_score": 0,
+
+                "trusted_source": False,
+
+                "publisher": "Unknown",
+
+                "trust_reasons": []
 
             }
 
-
+        # --------------------------------------------------
         # Article Statistics
+        # --------------------------------------------------
 
         word_count = len(news_text.split())
 
@@ -97,13 +119,15 @@ def predict_news(news_text):
 
         reading_time = max(1, round(word_count / 200))
 
-
+        # --------------------------------------------------
         # Text Cleaning
+        # --------------------------------------------------
 
         cleaned_text = clean_text(news_text)
 
-
+        # --------------------------------------------------
         # TF-IDF Features
+        # --------------------------------------------------
 
         news_vector = vectorizer.transform([cleaned_text])
 
@@ -123,8 +147,9 @@ def predict_news(news_text):
 
                 )
 
-
+        # --------------------------------------------------
         # Prediction
+        # --------------------------------------------------
 
         prediction = model.predict(news_vector)[0]
 
@@ -136,8 +161,9 @@ def predict_news(news_text):
 
         confidence = max(fake_probability, real_probability)
 
-
+        # --------------------------------------------------
         # Prediction Label
+        # --------------------------------------------------
 
         if prediction == 1:
 
@@ -147,8 +173,9 @@ def predict_news(news_text):
 
             label = "❌ FAKE NEWS"
 
-
+                # --------------------------------------------------
         # Risk Level
+        # --------------------------------------------------
 
         if confidence >= 95:
 
@@ -166,8 +193,9 @@ def predict_news(news_text):
 
             risk_level = "🔴 High"
 
-
+        # --------------------------------------------------
         # Model Explanation
+        # --------------------------------------------------
 
         if prediction == 1:
 
@@ -183,8 +211,117 @@ def predict_news(news_text):
                 "found in fake or misleading news content."
             )
 
+        # ==================================================
+        # Source Verification
+        # ==================================================
 
+        source_info = {
+
+            "trusted": False,
+
+            "publisher": "Unknown",
+
+            "domain": ""
+
+        }
+
+        if source_url:
+
+            source_info = check_source(source_url)
+
+        # ==================================================
+        # AI Trust Score
+        # ==================================================
+
+        trust_score = confidence
+
+        trust_reasons = []
+
+        # Trusted Publisher Bonus
+
+        if source_info["trusted"]:
+
+            trust_score += 15
+
+            trust_reasons.append(
+
+                f"Trusted Publisher ({source_info['publisher']})"
+
+            )
+
+        # Long Article Bonus
+
+        if word_count >= 300:
+
+            trust_score += 5
+
+            trust_reasons.append(
+
+                "Detailed Article"
+
+            )
+
+        # Very Short Article Penalty
+
+        elif word_count < 80:
+
+            trust_score -= 10
+
+            trust_reasons.append(
+
+                "Very Short Article"
+
+            )
+
+        # High Confidence Bonus
+
+        if confidence >= 95:
+
+            trust_score += 5
+
+            trust_reasons.append(
+
+                "High ML Confidence"
+
+            )
+
+        # Medium Confidence
+
+        elif confidence >= 80:
+
+            trust_reasons.append(
+
+                "Good ML Confidence"
+
+            )
+
+        else:
+
+            trust_reasons.append(
+
+                "Low ML Confidence"
+
+            )
+
+        # Clamp Score
+
+        trust_score = max(
+
+            0,
+
+            min(
+
+                100,
+
+                round(trust_score, 2)
+
+            )
+
+        )
+
+        # --------------------------------------------------
         # Processing Time
+        # --------------------------------------------------
 
         processing_time = round(
 
@@ -194,12 +331,13 @@ def predict_news(news_text):
 
         )
 
-
+        # --------------------------------------------------
         # Return Result
+        # --------------------------------------------------
 
         return {
 
-            "prediction": label,
+                        "prediction": label,
 
             "confidence": round(confidence, 2),
 
@@ -225,7 +363,15 @@ def predict_news(news_text):
 
             "explanation": explanation,
 
-            "top_keywords": top_keywords
+            "top_keywords": top_keywords,
+
+            "trust_score": trust_score,
+
+            "trusted_source": source_info["trusted"],
+
+            "publisher": source_info["publisher"],
+
+            "trust_reasons": trust_reasons
 
         }
 
@@ -257,6 +403,14 @@ def predict_news(news_text):
 
             "top_keywords": [],
 
+            "trust_score": 0,
+
+            "trusted_source": False,
+
+            "publisher": "Unknown",
+
+            "trust_reasons": [],
+
             "explanation": "Prediction could not be completed.",
 
             "error": str(e)
@@ -264,7 +418,9 @@ def predict_news(news_text):
         }
 
 
+# ==========================================================
 # Testing
+# ==========================================================
 
 if __name__ == "__main__":
 
@@ -275,24 +431,57 @@ if __name__ == "__main__":
     result = predict_news(news)
 
     print("\nPrediction :", result["prediction"])
+
     print(f"Confidence : {result['confidence']} %")
+
+    print(f"Trust Score : {result['trust_score']} %")
+
+    print(f"Publisher : {result['publisher']}")
+
+    print(f"Trusted Source : {result['trusted_source']}")
+
     print(f"Fake Probability : {result['fake_probability']} %")
+
     print(f"Real Probability : {result['real_probability']} %")
 
     print("\nArticle Statistics")
+
     print(f"Words : {result['word_count']}")
+
     print(f"Characters : {result['character_count']}")
+
     print(f"Reading Time : {result['reading_time']} min")
 
     print("\nPrediction Details")
+
     print(f"Risk Level : {result['risk_level']}")
+
     print(f"Processing Time : {result['processing_time']} sec")
+
     print(f"Prediction Time : {result['prediction_time']}")
 
+    print("\nTop Keywords")
+
+    if result["top_keywords"]:
+
+        print(", ".join(result["top_keywords"]))
+
+    else:
+
+        print("No significant keywords detected.")
+
+    print("\nTrust Factors")
+
+    for reason in result["trust_reasons"]:
+
+        print("-", reason)
+
     print("\nModel Explanation")
+
     print(result["explanation"])
 
     if "error" in result:
-        print(f"\nError : {result['error']}")
+
+        print("\nError :", result["error"])
 
     print("=" * 60)
