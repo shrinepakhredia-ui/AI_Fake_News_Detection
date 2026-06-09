@@ -385,6 +385,65 @@ def analyze_news_tab():
             )
 
 
+        st.divider()
+
+        st.subheader("📰 Overall News Authenticity")
+
+        left, right = st.columns([3,1])
+
+        with left:
+
+            st.progress(
+
+                result["authenticity_score"]/100
+
+            )
+
+        with right:
+
+            st.metric(
+
+                "Authenticity",
+
+                f"{result['authenticity_score']}%"
+
+            )
+
+        level = result["authenticity_level"]
+
+        if level == "Highly Authentic":
+
+            st.success(
+
+                f"🟢 {level}"
+
+            )
+
+        elif level == "Likely Authentic":
+
+            st.info(
+
+                f"🔵 {level}"
+
+            )
+
+        elif level == "Needs Verification":
+
+            st.warning(
+
+                f"🟡 {level}"
+
+            )
+
+        else:
+
+            st.error(
+
+                f"🔴 {level}"
+
+            )
+
+
 
         col1, col2 = st.columns(2)
 

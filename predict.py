@@ -106,6 +106,10 @@ def predict_news(news_text, source_url=None):
 
                 "publisher": "Unknown",
 
+                "authenticity_score": 0,
+
+                "authenticity_level": "Unknown",
+
                 "trust_reasons": []
 
             }
@@ -255,9 +259,9 @@ def predict_news(news_text, source_url=None):
 
         source_level = source_data["level"]
 
-        # ==================================================
+
         # AI Trust Score
-        # ==================================================
+
 
         trust_score = confidence
 
@@ -345,9 +349,48 @@ def predict_news(news_text, source_url=None):
 
         )
 
-        # --------------------------------------------------
+        #Overall News Authenticity Score
+
+        authenticity_score = (
+
+            (confidence * 0.45)
+
+            +
+
+            (trust_score * 0.35)
+
+            +
+
+            (source_score * 0.20)
+
+        )
+
+        authenticity_score = round(
+
+            min(100, authenticity_score),
+
+            2
+
+        )
+
+        if authenticity_score >= 90:
+
+            authenticity_level = "Highly Authentic"
+
+        elif authenticity_score >=75:
+
+            authenticity_level = "Likely Authentic"
+
+        elif authenticity_score >=60:
+
+            authenticity_level = "Needs Verification"
+
+        else:
+
+            authenticity_level = "Suspicious"
+
+
         # Processing Time
-        # --------------------------------------------------
 
         processing_time = round(
 
@@ -357,9 +400,9 @@ def predict_news(news_text, source_url=None):
 
         )
 
-        # --------------------------------------------------
+
         # Return Result
-        # --------------------------------------------------
+
 
         return {
 
@@ -401,7 +444,11 @@ def predict_news(news_text, source_url=None):
 
             "source_score": source_score,
 
-            "source_level": source_level
+            "source_level": source_level,
+
+            "authenticity_score": authenticity_score,
+
+            "authenticity_level": authenticity_level
 
         }
 
@@ -443,14 +490,18 @@ def predict_news(news_text, source_url=None):
 
             "explanation": "Prediction could not be completed.",
 
+            "authenticity_score": 0,
+
+            "authenticity_level": "Unknown",
+
             "error": str(e)
 
         }
 
 
-# ==========================================================
+
 # Testing
-# ==========================================================
+
 
 if __name__ == "__main__":
 
