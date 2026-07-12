@@ -21,3 +21,15 @@ data/
 
 # Generated models
 models/
+
+# Training datasets
+data/raw/
+data/processed/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+.env
