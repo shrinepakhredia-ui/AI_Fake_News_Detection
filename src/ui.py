@@ -252,10 +252,17 @@ def analyze_news_tab():
 
         with st.spinner("Analyzing News..."):
 
-            result = predict_news(
-                article["text"],
-                source_url = url
-            )
+            if input_mode == "📝 Paste News Text":
+
+                result = predict_news(news)
+
+            else:
+
+                result = predict_news(
+                    article["text"],
+                    url
+                )
+
 
 
         st.session_state.history.insert(
