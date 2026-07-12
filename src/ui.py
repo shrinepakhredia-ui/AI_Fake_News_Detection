@@ -859,7 +859,7 @@ def footer():
 
         st.caption(
 
-            "Made with ❤️ using Python • Streamlit • Scikit-Learn"
+            "Made with using Python • Streamlit • Scikit-Learn"
 
         )
 
