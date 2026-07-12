@@ -254,7 +254,7 @@ def analyze_news_tab():
 
             if input_mode == "📝 Paste News Text":
 
-                result = predict_news(news)
+                result = predict_news(news,None)
 
             else:
 
