@@ -19,8 +19,7 @@ Thumbs.db
 # Dataset
 data/
 
-# Generated models
-models/
+
 
 # Training datasets
 data/raw/
