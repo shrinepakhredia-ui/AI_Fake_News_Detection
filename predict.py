@@ -12,9 +12,8 @@ from src.preprocessing import clean_text
 from src.source_checker import check_source
 
 
-# ==========================================================
+
 # Load Trained Objects
-# ==========================================================
 
 print("Loading Trained Model...")
 
@@ -29,9 +28,8 @@ feature_names = vectorizer.get_feature_names_out()
 print("Model Loaded Successfully")
 
 
-# ==========================================================
+
 # Prediction Function
-# ==========================================================
 
 def predict_news(news_text, source_url=None):
     """
@@ -63,9 +61,8 @@ def predict_news(news_text, source_url=None):
 
     try:
 
-        # --------------------------------------------------
+
         # Validate Input
-        # --------------------------------------------------
 
         if not isinstance(news_text, str):
             raise TypeError("Input must be a string.")
@@ -114,9 +111,8 @@ def predict_news(news_text, source_url=None):
 
             }
 
-        # --------------------------------------------------
+
         # Article Statistics
-        # --------------------------------------------------
 
         word_count = len(news_text.split())
 
@@ -124,15 +120,12 @@ def predict_news(news_text, source_url=None):
 
         reading_time = max(1, round(word_count / 200))
 
-        # --------------------------------------------------
-        # Text Cleaning
-        # --------------------------------------------------
 
+        # Text Cleaning
         cleaned_text = clean_text(news_text)
 
-        # --------------------------------------------------
+
         # TF-IDF Features
-        # --------------------------------------------------
 
         news_vector = vectorizer.transform([cleaned_text])
 
@@ -152,9 +145,8 @@ def predict_news(news_text, source_url=None):
 
                 )
 
-        # --------------------------------------------------
+
         # Prediction
-        # --------------------------------------------------
 
         prediction = model.predict(news_vector)[0]
 
@@ -166,9 +158,8 @@ def predict_news(news_text, source_url=None):
 
         confidence = max(fake_probability, real_probability)
 
-        # --------------------------------------------------
+
         # Prediction Label
-        # --------------------------------------------------
 
         if prediction == 1:
 
@@ -178,9 +169,8 @@ def predict_news(news_text, source_url=None):
 
             label = "❌ FAKE NEWS"
 
-                # --------------------------------------------------
+
         # Risk Level
-        # --------------------------------------------------
 
         if confidence >= 95:
 
@@ -198,27 +188,72 @@ def predict_news(news_text, source_url=None):
 
             risk_level = "🔴 High"
 
-        # --------------------------------------------------
-        # Model Explanation
-        # --------------------------------------------------
+        # AI Explanation
 
         if prediction == 1:
 
-            explanation = (
-                "The article contains language patterns that are "
-                "similar to factual and genuine news articles."
+            explanation = f"""
+        ### ✅ AI Assessment
+
+        The model predicts that this article is **likely genuine**.
+
+        ### Why?
+
+        • Writing style matches trusted news patterns.
+
+        • Language appears balanced and objective.
+
+        • No strong misleading linguistic signals were detected.
+
+        • Source reliability and article structure support authenticity.
+
+        ### Recommendation
+
+        You can consider this article **reliable**, but always cross-check important information with multiple trusted publishers.
+        """
+
+        else:
+
+            explanation = f"""
+        ### 🚨 AI Assessment
+
+        The model predicts that this article is **likely fake or misleading**.
+
+        ### Why?
+
+        • Sensational or emotionally charged wording was detected.
+
+        • Writing pattern differs from verified news articles.
+
+        • Low source credibility or suspicious language indicators were found.
+
+        • Prediction confidence suggests possible misinformation.
+
+        ### Recommendation
+
+        Avoid sharing this article until it has been verified by trusted news organizations.
+        """
+
+        # AI Verdict Summary
+
+        if prediction == 1:
+
+            verdict = (
+                f"This article is likely authentic with a confidence of "
+                f"{round(confidence,1)}%. "
+                f"The writing style resembles genuine journalism "
+                f"and no major misinformation patterns were detected."
             )
 
         else:
 
-            explanation = (
-                "The article contains language patterns commonly "
-                "found in fake or misleading news content."
+            verdict = (
+                f"This article appears suspicious with a confidence of "
+                f"{round(confidence,1)}%. "
+                f"The model detected linguistic patterns commonly "
+                f"associated with fake or misleading news."
             )
-
-        # ==================================================
         # Source Verification
-        # ==================================================
 
         source_info = {
 
@@ -231,7 +266,7 @@ def predict_news(news_text, source_url=None):
         }
 
         #Source Verification
-        
+
         trusted_source = False
 
         publisher="Unknown"
@@ -448,7 +483,29 @@ def predict_news(news_text, source_url=None):
 
             "authenticity_score": authenticity_score,
 
-            "authenticity_level": authenticity_level
+            "authenticity_level": authenticity_level,
+
+            "ai_verdict": verdict,
+
+            "confidence_label": (
+                "Very High" if confidence >= 95 else
+                "High" if confidence >= 85 else
+                "Medium" if confidence >= 70 else
+                "Low"
+            ),
+
+            "ai_verdict": (
+                "Highly Reliable"
+                if authenticity_score >= 90
+                else
+                "Likely Genuine"
+                if authenticity_score >= 75
+                else
+                "Needs Verification"
+                if authenticity_score >= 60
+                else
+                "Potential Misinformation"
+            ),
 
         }
 
@@ -493,6 +550,10 @@ def predict_news(news_text, source_url=None):
             "authenticity_score": 0,
 
             "authenticity_level": "Unknown",
+
+            "confidence_label": "Unknown",
+
+            "ai_verdict": "Unknown",
 
             "error": str(e)
 
