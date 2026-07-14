@@ -43,10 +43,8 @@ def load_sample_dataset():
 
     df = pd.read_csv("data/samples/sample_news.csv")
 
-    df["title"] = df["title"].fillna("")
-    df["text"] = df["text"].fillna("")
-
-    df["content"] = df["title"] + " " + df["text"]
+    print(df.columns)
+    print(df["label"].value_counts())
 
     return df
 
@@ -283,6 +281,7 @@ def analyze_news_tab():
             .iloc[0]
         )
 
+
         st.session_state.news_text = sample["title"] + "\n\n" + sample["text"]
 
         st.rerun()
@@ -294,9 +293,14 @@ def analyze_news_tab():
 
         sample = (
             df[df["label"] == 0]
-            .sample(2)
+            .sample(1)
             .iloc[0]
         )
+
+        print("="*60)
+        print("Loaded Label :", sample["label"])
+        print("Loaded Title :", sample["title"])
+        print("="*60)
 
         st.session_state.news_text = sample["title"] + "\n\n" + sample["text"]
 

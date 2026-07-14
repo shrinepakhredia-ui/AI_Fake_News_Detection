@@ -156,6 +156,7 @@ def predict_news(news_text, source_url=None):
 
         real_probability = probabilities[1] * 100
 
+
         confidence = max(fake_probability, real_probability)
 
         # Prediction Label
