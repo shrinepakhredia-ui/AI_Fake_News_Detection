@@ -18,6 +18,7 @@
 
 ### 🌐 Live Demo
 
+**App Link:**
 https://aifakenewsdetection-qxe5yc6znszq3ljuwtxfxk.streamlit.app/
 
 **GitHub Repository:**
