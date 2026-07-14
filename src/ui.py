@@ -40,12 +40,7 @@ def initialize_session():
 
 @st.cache_data
 def load_sample_dataset():
-
-    df = pd.read_csv("data/processed/processed_news.csv")
-
-    df["content"] = df["content"].fillna("").astype(str)
-
-    return df
+        return pd.read_csv("data/samples/sample_news.csv")
 
 # Header
 def dashboard_card(icon, title, value):
