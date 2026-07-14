@@ -294,7 +294,7 @@ def analyze_news_tab():
 
         sample = (
             df[df["label"] == 0]
-            .sample(1)
+            .sample(2)
             .iloc[0]
         )
 
