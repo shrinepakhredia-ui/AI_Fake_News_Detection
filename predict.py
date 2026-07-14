@@ -4,7 +4,7 @@ from datetime import datetime
 from src.source_score import get_source_score
 
 from config import (
-    RANDOM_FOREST_MODEL,
+    LOGISTIC_REGRESSION_MODEL,
     TFIDF_MODEL,
 )
 
@@ -17,7 +17,7 @@ from src.source_checker import check_source
 
 print("Loading Trained Model...")
 
-model = joblib.load(RANDOM_FOREST_MODEL)
+model = joblib.load(LOGISTIC_REGRESSION_MODEL)
 
 print("Loading TF-IDF Vectorizer...")
 
@@ -157,7 +157,6 @@ def predict_news(news_text, source_url=None):
         real_probability = probabilities[1] * 100
 
         confidence = max(fake_probability, real_probability)
-
 
         # Prediction Label
 

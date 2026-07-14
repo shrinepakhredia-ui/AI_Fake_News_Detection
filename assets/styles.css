@@ -338,3 +338,21 @@ div[data-baseweb="notification"] span{
     color:#111827 !important;
 
 }
+
+/* Loading Animation */
+
+div[data-testid="stProgress"]{
+
+border-radius:20px;
+
+overflow:hidden;
+
+height:12px;
+
+}
+
+div[data-testid="stProgress"] div{
+
+border-radius:20px;
+
+}

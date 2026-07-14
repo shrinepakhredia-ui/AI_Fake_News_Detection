@@ -2,6 +2,7 @@ import joblib
 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
     precision_score,
@@ -13,6 +14,7 @@ from sklearn.metrics import (
 
 from config import (
     RANDOM_FOREST_MODEL,
+    LOGISTIC_REGRESSION_MODEL,
     RANDOM_STATE,
     TEST_SIZE,
     N_ESTIMATORS,
@@ -71,6 +73,43 @@ def train_model(X, y):
 
     print("Confusion Matrix\n")
     print(confusion_matrix(y_test, predictions))
+
+
+
+
+    # Train Logistic Regression
+
+
+    print("\nTraining Logistic Regression Model...")
+
+    logistic_model = LogisticRegression(
+
+        max_iter=1000,
+
+        random_state=RANDOM_STATE
+
+    )
+
+    logistic_model.fit(X_train, y_train)
+
+    logistic_predictions = logistic_model.predict(X_test)
+
+    logistic_accuracy = accuracy_score(
+        y_test,
+        logistic_predictions
+    )
+
+    print(f"Logistic Regression Accuracy : {logistic_accuracy:.4f}")
+
+    joblib.dump(
+
+        logistic_model,
+
+        LOGISTIC_REGRESSION_MODEL
+
+    )
+
+    print("Logistic Regression Saved Successfully")
 
     # Save Model
     joblib.dump(model, RANDOM_FOREST_MODEL)

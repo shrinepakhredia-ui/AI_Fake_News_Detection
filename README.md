@@ -1,13 +1,14 @@
 <div align="center">
 
-# 📰 AI Fake News Detection Pro
+# 📰 AI Fake News Detection
 
-### AI-Powered Fake News Detection using Machine Learning & Trusted Source Verification
+### AI-Powered Fake News Detection using NLP, Machine Learning & Source Reliability Analysis
 
 [![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-Web_App-FF4B4B?logo=streamlit)](https://streamlit.io/)
 [![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-ML-F7931E?logo=scikitlearn)](https://scikit-learn.org/)
-[![Random Forest](https://img.shields.io/badge/Model-Random_Forest-success)]()
+[![Logistic Regression](https://img.shields.io/badge/Model-Logistic_Regression-success)]()
+[![NLP](https://img.shields.io/badge/NLP-TF--IDF-orange)]()
 [![TF-IDF](https://img.shields.io/badge/NLP-TF--IDF-blueviolet)]()
 [![License](https://img.shields.io/badge/License-MIT-green)]()
 
@@ -26,9 +27,18 @@ https://github.com/shrinepakhredia-ui/AI_Fake_News_Detection_Pro
 
 # 📖 Overview
 
-AI Fake News Detection Pro is a Machine Learning-based web application that classifies news articles as **Real** or **Fake** using Natural Language Processing.
+AI Fake News Detection Pro is an AI-powered web application that detects whether a news article is **Real** or **Fake** using Natural Language Processing and Machine Learning.
 
-Unlike traditional fake news detectors, this application combines **Machine Learning predictions**, **Trusted Publisher Verification**, **Source Reliability Analysis**, and an **Overall Authenticity Score** to provide transparent and explainable predictions.
+The application goes beyond simple text classification by combining:
+
+- Machine Learning Prediction
+- Trusted Publisher Verification
+- Source Reliability Analysis
+- AI Explanation
+- Authenticity Score
+- Prediction Analytics Dashboard
+
+to provide transparent, explainable and user-friendly fake news detection.
 
 ---
 
@@ -152,63 +162,92 @@ The Streamlit dashboard includes:
 
 ---
 
+## 📂 Sample News Loader
+
+- Load Random Real News
+- Load Random Fake News
+- Test the model instantly using benchmark datasets
+
+---
+
+## 📊 Prediction Analytics Dashboard
+
+- Total Predictions
+- Real vs Fake Statistics
+- Average Confidence
+- Highest Confidence
+- Processing Time
+- Download Prediction History
+
+---
+
+## ⚠ AI Disclaimer
+
+- Clearly communicates model limitations
+- Encourages verification through trusted sources
+- Prevents misuse of AI predictions
+
 # 🧠 Machine Learning Workflow
 
 ```text
-News Article
-      │
-      ▼
+News Article / URL
+        │
+        ▼
 Text Cleaning
-      │
-      ▼
-TF-IDF Vectorization
-      │
-      ▼
-Random Forest Classifier
-      │
-      ▼
+        │
+        ▼
+TF-IDF Feature Extraction
+        │
+        ▼
+Logistic Regression
+        │
+        ▼
 Prediction
-      │
-      ▼
+        │
+        ▼
 Publisher Verification
-      │
-      ▼
-Source Reliability
-      │
-      ▼
-AI Trust Score
-      │
-      ▼
-Overall Authenticity Score
+        │
+        ▼
+Reliability Analysis
+        │
+        ▼
+AI Explanation
+        │
+        ▼
+Authenticity Score
+        │
+        ▼
+Prediction Dashboard
 ```
 
 ---
 
 # 🛠 Tech Stack
 
-| Category            | Technologies   |
-| ------------------- | -------------- |
-| Programming         | Python         |
-| Web Framework       | Streamlit      |
-| Machine Learning    | Scikit-Learn   |
-| NLP                 | TF-IDF         |
-| Model               | Random Forest  |
-| Data Processing     | Pandas, NumPy  |
-| Visualization       | Plotly         |
-| Model Serialization | Joblib         |
-| URL Extraction      | Newspaper3k    |
-| HTML Parsing        | BeautifulSoup4 |
+| Category            | Technologies        |
+| ------------------- | ------------------- |
+| Programming         | Python              |
+| Web Framework       | Streamlit           |
+| Machine Learning    | Scikit-Learn        |
+| NLP                 | TF-IDF              |
+| Model               | Logistic Regression |
+| Data Processing     | Pandas, NumPy       |
+| Visualization       | Plotly              |
+| Model Serialization | Joblib              |
+| URL Extraction      | Newspaper3k         |
+| HTML Parsing        | BeautifulSoup4      |
+| Data Source         | ISOT + WELFake      |
 
 ---
 
 # 📊 Model Performance
 
-| Metric    |      Score |
-| --------- | ---------: |
-| Accuracy  | **99.83%** |
-| Precision | **99.77%** |
-| Recall    | **99.88%** |
-| F1 Score  | **99.82%** |
+| Metric    | Score      |
+| --------- | ---------- |
+| Accuracy  | **94.34%** |
+| Precision | **94%**    |
+| Recall    | **94%**    |
+| F1 Score  | **94%**    |
 
 ---
 
@@ -244,6 +283,12 @@ width="900">
 <p align="center">
 <img src="assets/images/AI-explanation.png" width="900">
 
+## 📜 Prediction History
+
+<p align="center">
+<img src="assets/images/history.png" width="900">
+</p>
+
 # 📂 Project Structure
 
 ```text
@@ -256,6 +301,7 @@ AI_Fake_News_Detection_Pro
 │
 ├── models
 │   ├── random_forest.pkl
+│   ├──logistic_regression.pkl
 │   └── tfidf_vectorizer.pkl
 │
 ├── src
@@ -303,11 +349,27 @@ streamlit run app.py
 # 🚀 Future Improvements
 
 - Live News API Integration
-- BERT-based Classification
-- Explainable AI (XAI)
+- BERT / RoBERTa based Classification
+- Explainable AI (SHAP/LIME)
 - Browser Extension
-- Multi-language Support
-- AI Chat Assistant for News Verification
+- Multilingual Fake News Detection
+- Image & Video Fake News Detection
+- LLM-assisted Fact Verification
+
+---
+
+# ⚠ Model Limitations
+
+Although the model performs well on benchmark datasets, predictions on unseen or rapidly evolving news events may vary.
+
+Current limitations include:
+
+- Trained primarily on ISOT and WELFake datasets.
+- Performance may decrease on regional or emerging news topics.
+- Predictions are probabilistic rather than absolute.
+- Results should always be verified using trusted news organizations.
+
+This project is intended for educational, research and portfolio purposes.
 
 ---
 

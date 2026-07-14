@@ -47,8 +47,19 @@ def extract_features():
     print("\nApplying TF-IDF...")
 
     vectorizer = TfidfVectorizer(
+
         max_features=MAX_FEATURES,
-        stop_words=STOP_WORDS
+
+        stop_words=STOP_WORDS,
+
+        ngram_range=(1,2),
+
+        min_df=2,
+
+        max_df=0.95,
+
+        sublinear_tf=True
+
     )
 
     X = vectorizer.fit_transform(X)

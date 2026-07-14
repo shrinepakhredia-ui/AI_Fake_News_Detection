@@ -32,3 +32,9 @@ __pycache__/
 # Virtual environment
 venv/
 .env
+
+#test model
+test_model.py
+
+#models
+tfidf_vectorizer.pkl

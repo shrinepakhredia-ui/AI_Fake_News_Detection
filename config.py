@@ -11,6 +11,7 @@ PROCESSED_DATASET = f"{PROCESSED_DATA_DIR}/processed_news.csv"
 
 TFIDF_MODEL = f"{MODEL_DIR}/tfidf_vectorizer.pkl"
 RANDOM_FOREST_MODEL = f"{MODEL_DIR}/random_forest.pkl"
+LOGISTIC_REGRESSION_MODEL = f"{MODEL_DIR}/logistic_regression.pkl"
 
 # Dataset Settings
 
@@ -20,7 +21,7 @@ RANDOM_STATE = 42
 
 # TF-IDF Settings
 
-MAX_FEATURES = 5000
+MAX_FEATURES = 10000
 
 STOP_WORDS = "english"
 
@@ -30,6 +31,6 @@ N_ESTIMATORS = 100
 
 # Streamlit Settings
 
-APP_TITLE = "📰 Fake News Detection Pro"
+APP_TITLE = "📰 Fake News Detection "
 
 PAGE_TITLE = "AI Fake News Detection"
