@@ -271,7 +271,7 @@ def analyze_news_tab():
 
         sample = df[df["label"] == 1].iloc[0]
 
-        st.session_state.news_text = sample["content"]
+        st.session_state.news_text = sample["tittle","text"]
 
         st.rerun()
 
@@ -282,7 +282,7 @@ def analyze_news_tab():
 
         sample = df[df["label"] == 0].iloc[0]
 
-        st.session_state.news_text = sample["content"]
+        st.session_state.news_text = sample["tittle","text"]
 
         st.rerun()
 
