@@ -40,7 +40,15 @@ def initialize_session():
 
 @st.cache_data
 def load_sample_dataset():
-        return pd.read_csv("data/samples/sample_news.csv")
+
+    df = pd.read_csv("data/samples/sample_news.csv")
+
+    df["title"] = df["title"].fillna("")
+    df["text"] = df["text"].fillna("")
+
+    df["content"] = df["title"] + " " + df["text"]
+
+    return df
 
 # Header
 def dashboard_card(icon, title, value):
@@ -269,9 +277,13 @@ def analyze_news_tab():
 
         df = load_sample_dataset()
 
-        sample = df[df["label"] == 1].iloc[0]
+        sample = (
+            df[df["label"] == 1]
+            .sample(1)
+            .iloc[0]
+        )
 
-        st.session_state.news_text = sample["tittle","text"]
+        st.session_state.news_text = sample["title"] + "\n\n" + sample["text"]
 
         st.rerun()
 
@@ -280,9 +292,13 @@ def analyze_news_tab():
 
         df = load_sample_dataset()
 
-        sample = df[df["label"] == 0].iloc[0]
+        sample = (
+            df[df["label"] == 0]
+            .sample(1)
+            .iloc[0]
+        )
 
-        st.session_state.news_text = sample["tittle","text"]
+        st.session_state.news_text = sample["title"] + "\n\n" + sample["text"]
 
         st.rerun()
 
