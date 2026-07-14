@@ -237,13 +237,13 @@ def analyze_news_tab():
 
     with col1:
         load_real = st.button(
-            "✅ Real Sample",
+            "✅ Load Verified Real Demo",
             use_container_width=True
         )
 
     with col2:
         load_fake = st.button(
-            "❌ Fake Sample",
+            "❌ Load Verified Fake Demo",
             use_container_width=True
         )
 
@@ -269,15 +269,7 @@ def analyze_news_tab():
 
         df = load_sample_dataset()
 
-        sample = (
-
-            df[df["label"] == 1]
-
-            .sample(1)
-
-            .iloc[0]
-
-        )
+        sample = df[df["label"] == 1].iloc[0]
 
         st.session_state.news_text = sample["content"]
 
@@ -288,20 +280,11 @@ def analyze_news_tab():
 
         df = load_sample_dataset()
 
-        sample = (
-
-            df[df["label"] == 0]
-
-            .sample(1)
-
-            .iloc[0]
-
-        )
+        sample = df[df["label"] == 0].iloc[0]
 
         st.session_state.news_text = sample["content"]
 
         st.rerun()
-
 
     if clear:
 
@@ -1359,11 +1342,17 @@ def about_tab():
     st.info("💡 This project combines Machine Learning predictions with source credibility analysis, AI trust scoring and authenticity evaluation to improve decision making.")
 
 
+
     st.markdown("""
+    ## ⚠ Verified Demo Samples
+
+    Verified Demo Samples are provided to demonstrate the application's workflow.
+    Predictions on real-world unseen articles may vary depending on writing style,
+    source credibility and topic distribution.
 
     ---
 
-    ## ⚠ Model Limitations
+    ### ⚠ Model Limitations
 
     While this application demonstrates the capabilities of Machine Learning for fake news detection, it has certain limitations:
 
