@@ -16,10 +16,7 @@
 
 ---
 
-### 🌐 Live Demo
-
-**App Link:**
-https://aifakenewsdetection-qxe5yc6znszq3ljuwtxfxk.streamlit.app/
+### 🌐 Live Demo(https://aifakenewsdetection-qxe5yc6znszq3ljuwtxfxk.streamlit.app/)
 
 **GitHub Repository:**
 https://github.com/shrinepakhredia-ui/AI_Fake_News_Detection_Pro
