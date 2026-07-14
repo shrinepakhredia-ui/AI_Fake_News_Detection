@@ -16,7 +16,7 @@
 
 ---
 
-### 🌐Important Links
+# 🌐Important Links
 
 **Live Demo:**
 (https://aifakenewsdetection-qxe5yc6znszq3ljuwtxfxk.streamlit.app/)
